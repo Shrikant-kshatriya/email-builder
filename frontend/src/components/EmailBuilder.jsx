@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { RiRefreshFill } from "react-icons/ri";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -65,10 +66,10 @@ const EmailBuilder = () => {
     const moveSection = (direction) => {
         const index = sections.findIndex(section => section.id === selectedSection.id);
         if (index === -1) return;
-    
+
         const newSections = [...sections];
         const [movedSection] = newSections.splice(index, 1);
-    
+
         if (direction === 'up') {
             const newIndex = index - 1;
             if (newIndex >= 0) {
@@ -84,7 +85,7 @@ const EmailBuilder = () => {
                 newSections.splice(newIndex, 0, movedSection);
             }
         }
-    
+
         setSections(newSections);
     };
 
@@ -131,66 +132,66 @@ const EmailBuilder = () => {
 
     const validateTemplate = () => {
         if (templateId === '3') {
-          if (!logoFile) {
-            toast.error('Logo image is required', {position: 'top-left'});
-            return false;
-          }
-          if (!heroImageFile) {
-            toast.error('Hero image is required', {position: 'top-left'});
-            return false;
-          }
-          return true;
+            if (!logoFile) {
+                toast.error('Logo image is required', { position: 'top-left' });
+                return false;
+            }
+            if (!heroImageFile) {
+                toast.error('Hero image is required', { position: 'top-left' });
+                return false;
+            }
+            return true;
         }
-        
+
         if (!heroImageFile) {
-          toast.error('Hero image is required', {position: 'top-left'});
-          return false;
+            toast.error('Hero image is required', { position: 'top-left' });
+            return false;
         }
-        
+
         return true;
-      };
+    };
 
     const handleGenerateTemplate = async () => {
-        if(validateTemplate()){
+        if (validateTemplate()) {
 
             try {
-              setLoading(true);
-          
-              const formData = new FormData();
-              formData.append('logo', logoFile);
-              formData.append('heroImage', heroImageFile);
-              formData.append('sections', JSON.stringify(sections));
-          
-              console.log(formData);
-          
-              const res = await axios.post(`/upload`, formData, {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-                responseType: 'blob', 
-              });
-    
-              const blob = res.data;
-              const url = window.URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = 'emailTemplate.html'; 
-              link.click();
-    
-              toast.success('Email template generated successfully', { position: 'top-left' });
+                setLoading(true);
+
+                const formData = new FormData();
+                formData.append('logo', logoFile);
+                formData.append('heroImage', heroImageFile);
+                formData.append('sections', JSON.stringify(sections));
+
+                console.log(formData);
+
+                const res = await axios.post(`/upload`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    responseType: 'blob',
+                });
+
+                const blob = res.data;
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'emailTemplate.html';
+                link.click();
+
+                toast.success('Email template generated successfully', { position: 'top-left' });
             } catch (error) {
-              toast.error('Failed to generate email template', {position: 'top-left'});
+                toast.error('Failed to generate email template', { position: 'top-left' });
             } finally {
-              setLoading(false);
+                setLoading(false);
             }
         }
-      };
-      
+    };
+
 
     return (
-        <div className="flex-grow w-screen flex items-center justify-center bg-gradient-to-r from-green-500 to-teal-500">
-            <div className="max-w-4xl lg:max-w-5xl h-[80vh] lg:h-[75vh] mx-auto p-4 lg:p-3 bg-white shadow-2xl rounded-lg flex">
-                <div className="w-2/3 p-3 bg-white rounded-lg shadow-lg h-full overflow-auto">
+        <div className="flex-grow w-screen flex items-center justify-center bg-gradient-to-r from-slate-700 to-slate-800">
+            <div className="relative max-w-4xl lg:max-w-5xl h-[80vh] lg:h-[75vh] mx-auto p-4 lg:p-3 bg-gray-500 shadow-2xl rounded-lg flex">
+                <div className="w-2/3 p-3 bg-gray-100 rounded-lg shadow-lg h-full overflow-auto">
                     <h2 className="text-lg lg:text-xl font-bold mb-4 text-green-700">Email Template Preview</h2>
                     <div className="bg-[#f0ebff] p-2 lg:p-3 rounded-lg shadow-inner">
                         {sections?.map((section) => renderSection(section))}
@@ -331,15 +332,31 @@ const EmailBuilder = () => {
 
                     </div>
                 </div>
+                <div className="absolute -top-[70px] right-0 mt-5 mr-5 flex space-x-6 items-center">
+                    {/* Refresh Button */}
+                    <button
+                        onClick={e => {e.preventDefault(); fetchTemplate();}}
+                        className="bg-red-500 text-white rounded-full p-2 shadow-md hover:bg-red-400 focus:outline-none"
+                        aria-label="Refresh"
+                    >
+                        <RiRefreshFill size={24} />
+                    </button>
+
+                    {/* Generate Template Button */}
+                    <div className="relative inline-flex group">
+                        <div
+                            className="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
+                        ></div>
+                        <button
+                            onClick={handleGenerateTemplate}
+                            className="relative inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-800"
+                        >
+                            {loading ? <Audio width="18" color="white" /> : 'Generate HTML'}
+                        </button>
+                    </div>
+                </div>
+
             </div>
-                        <div className="absolute top-16 right-5 mt-5 flex justify-between space-x-4">
-                            <button
-                                onClick={handleGenerateTemplate}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            >
-                                {loading ? <Audio width="24" color="white" /> : 'Generate HTML'}
-                            </button>
-                        </div>
             <ToastContainer />
         </div>
     );
