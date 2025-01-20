@@ -7,7 +7,7 @@
       {
         "src": "/(.*)",
         "headers": {
-          "Access-Control-Allow-Origin": "https://restaurant-table-booking-flame.vercel.app",
+          "Access-Control-Allow-Origin": "https://email-builder-frontend-tau.vercel.app",
           "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization",
           "Access-Control-Allow-Credentials": "true"
@@ -15,5 +15,5 @@
         "dest": "index.js" 
       }
     ]
-    
+
   }
