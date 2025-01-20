@@ -1,0 +1,10 @@
+{
+    "redirects": [
+      {
+        "source": "/((?!api|_next).*)",
+        "destination": "/index.html",
+        "permanent": false
+      }
+    ]
+  }
+  
